@@ -1,3 +1,24 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario_cli'])){
+    echo '
+        <script>
+            alert("Favor de iniciar sesión");
+            window.location = "index.php";
+        </script>
+    ';
+    session_destroy();
+    die();
+}
+
+include('D:\XAMPP\htdocs\Barenfutter\php\conexion_be.php');
+
+// Consulta para obtener los productos del usuario actual
+$usuario_cli_email = $_SESSION['usuario_cli']['email'];
+$query = "SELECT ID, nombre_pro, descripcion_pro, precio_pro, tipo_pro, ubicacion_pro, horario_pro, foto_pro FROM producto WHERE usuario_cli = '$usuario_cli_email'";
+$result = mysqli_query($conexion, $query);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -15,12 +36,11 @@
         <link rel="shortcut icon" href="assets/images/194343.svg">
     </head>
     <body>
-        <!-- ENCABEZADO -->
         <header>
             <a href="index_ven.php" class="logo"><img src="assets/images/194343.svg" height="50px"><span>BARENFUTTER</span></a>
             <ul class="navbar">
                 <li><a href="index_ven.php" class="active">Inicio</a></li>
-                <li><a href="mi_productos.php" class="">Mis productos</a></li>
+                <li><a href="#" class="">Mis productos</a></li>
                 <li><a href="agre_pro.php" class="">Agregar prod</a></li>
                 <li><a href="php/sesion.php" class="">Cliente</a></li>
             </ul>
@@ -30,63 +50,36 @@
                 <div class="bx bx-menu" id="menu-icon"></div>
             </div>
         </header>
+        <div class="fexid-top" id="fixed-cabecera">
+            <div>
+                <h1>BIENVENIDO!!</h1>
+                <h3>AQUI PODRAS ANUNCIAR TODOS TUS PRODUCTOS</h3>
+            </div>
+        </div>
+        <h1>MIS PRODUCTOS</h1>
 
-        <!-- FORMULARIO PARA AGREGAR COMIDA -->
-        <div id="fixed-cabecera-2"> 
-            <section class="main-sect">
-                <div class="title-container">
-                    <h1 class="title_from-pro">Agregar producto</h1>
+        <div class="fexid-top" id="image">
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                <div class="imagen1">
+                    <img class="img" src="<?php echo $row['foto_pro']; ?>" alt="Producto" height="300px">
+                    <div class="texto1">
+                        <div>
+                            <h1><?php echo htmlspecialchars($row['nombre_pro']); ?></h1>
+                            <hr><br>
+                            <h3><?php echo htmlspecialchars($row['descripcion_pro']); ?></h3>
+                            <p>Horario: <?php echo htmlspecialchars($row['horario_pro']); ?></p>
+                            <p>Teléfono: <?php echo htmlspecialchars($row['ubicacion_pro']); ?></p>
+                            <br>
+                            <a href="php/edit_product.php?id=<?php echo $row['ID']; ?>" class="btn-editar">Editar</a>
+                            <a href="php/eliminar_pro.php?id=<?php echo $row['ID']; ?>" class="btn-eliminar">Eliminar</a>
+                        </div>
+                    </div>
                 </div>
-                <form action="php/regis_pro.php" method="POST" enctype="multipart/form_data">
-                    <div class="main-box">
-                        <div class="input-box">
-                            <span class="text">Nombre del prodcuto</span>
-                            <input type="text" placeholder="Nombre producto" name="nombre_pro" required>
-                        </div>
-                        <div class="input-box">
-                            <span class="text">Descripción</span>
-                            <input type="text" placeholder="Descripción" name="descripcion_pro" required>
-                        </div>
-                        <div class="input-box">
-                            <span class="text">Precio</span>
-                            <input type="text" placeholder="Precio $" name="precio_pro" required>
-                        </div>
-                        <div class="input-box">
-                            <span class="text">Ubicación</span>
-                            <input type="text" placeholder="Ubicación" name="ubicacion_pro" required>
-                        </div>
-                        <div class="input-box">
-                            <span class="text">Horario</span>
-                            <input type="text" placeholder="Ejemplo: M1 a M3" name="horario_pro" required>
-                        </div>
-                        <div class="input-box">
-                            <span class="text">Foto del producto (URL)</span>
-                            <input type="text" placeholder="URL de la imagen" name="imagen_url" required>
-                        </div>
-                    </div>
-                    <div class="container">
-                        <input type="radio" name="tipo_pro" id="circle-1">
-                        <input type="radio" name="tipo_pro" id="circle-2">
-                        <span class="gender">Tipo</span>
-                        <div class="category">
-                            <label for="circle-1">
-                                <span class="circle one"></span>
-                                <span class="comida">Comida</span>
-                            </label>
-                            <label for="circle-2">
-                                <span class="circle two"></span>
-                                <span class="comida">Bebida</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="btn">
-                        <input type="submit" name="subir" value="Subir">
-                    </div>
-                </form>
-            </section>
-        </div>    
+            <?php endwhile; ?>
+        </div>
 
-        <!-- PIE DE PAGINA -->
+        
+        <!--::::Pie de Pagina::::::-->
         <footer class="pie-pagina">
             <div class="grupo-1">
                 <div class="box">
@@ -99,6 +92,7 @@
                 <div class="box">
                     <h2>SOBRE NOSOTROS</h2>
                     <p>Somos una app desiñada por estudiante de FIME con el proposito de darle un espacio unico a todo aquella persona que quiera verder o comprar algun prodcuto vendido por los estudiantes en FIME.</p>
+                    <p></p>
                 </div>
                 <div class="box">
                     <h2>SIGUENOS</h2>

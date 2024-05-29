@@ -71,6 +71,11 @@ header{
     color: var(--main-color);
 }
 
+.user.active {
+    color: var(--main-color); /* Cambia el color del texto */
+    font-weight: bold; /* O cualquier otro estilo que desees */
+}
+
 .main{
     display: flex;
     align-items: center;
@@ -431,3 +436,32 @@ form .btn input{
 form .btn input:hover{
     background: var(--bg-color);
 }
+
+.btn-editar,
+    .btn-eliminar {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-editar {
+        background-color: #59c85d; /* Color verde */
+        color: white;
+    }
+
+    .btn-eliminar {
+        background-color: #f44336; /* Color rojo */
+        color: white;
+    }
+
+    .btn-eliminar:hover {
+        background-color: #c6372d; /* Cambia el color al pasar el ratón */
+    }
+
+    .btn-editar:hover {
+        background-color: #45a040; /* Cambia el color al pasar el ratón */
+    }

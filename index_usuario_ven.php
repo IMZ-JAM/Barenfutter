@@ -1,29 +1,24 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario_cli'])){
-    echo '
-        <script>
-            alert("Favor de iniciar sesión");
-            window.location = "index.php";
-        </script>
-    ';
-    session_destroy();
-    die();
+
+// Verifica si el usuario ha iniciado sesión
+if (!isset($_SESSION['usuario_cli']) || !is_array($_SESSION['usuario_cli'])) {
+    // Si no está autenticado, redirige al usuario a la página de inicio de sesión
+    header("Location: index.php");
+    exit();
 }
 
-include('php/conexion_be.php');
-
-$query = "SELECT nombre_pro, descripcion_pro, precio_pro, tipo_pro, ubicacion_pro, horario_pro, foto_pro FROM producto";
-$result = mysqli_query($conexion, $query);
+// Obtener la información del usuario desde la sesión
+$usuario = $_SESSION['usuario_cli'];
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Barenfutter</title>
+    <title>Mi perfil</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/navbar.css" type="text/css">
+
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,13 +26,64 @@ $result = mysqli_query($conexion, $query);
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Poppins:wght@500;600&display=swap" rel="stylesheet"> 
     <script src="https://kit.fontawesome.com/eb496ab1a0.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" href="assets/images/194343.svg">
+    <style>
+        /* Estilos adicionales */
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #1a9332;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .profile-header h1 {
+            margin-top: 10px;
+            font-size: 24px;
+        }
+        .profile-info {
+            font-family: 'Poppins', sans-serif;
+            background-color: rgb(34, 35, 39);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .profile-info h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        .profile-info p {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .profile-info .fa {
+            margin-right: 5px;
+            color: #555;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
     <header>
         <a href="php/sesion.php" class="logo"><img src="assets/images/194343.svg" height="50px"><span>BARENFUTTER</span></a>
         <ul class="navbar">
-            <li><a href="php/sesion.php" class="active">Inicio</a></li>
-            <li><a href="index_ven.php" class="nav-link" >Vendedor</a></li>
+            <li><a href="index_ven.php" class="active">Inicio</a></li>
+            <li><a href="mi_productos.php" class="">Mis productos</a></li>
+            <li><a href="agre_pro.php" class="">Agregar prod</a></li>
+            <li><a href="php/sesion.php" class="">Cliente</a></li>
         </ul>
         <div class="main">
             <a href="index_usuario.php" class="user"><i class="ri-user-fill"></i>Mi cuenta</a>
@@ -45,33 +91,21 @@ $result = mysqli_query($conexion, $query);
             <div class="bx bx-menu" id="menu-icon"></div>
         </div>
     </header>
-    <div class="fexid-top" id="fixed-cabecera">
-        <div>
-            <h1>BIENVENIDOS A BARENFUTTER!!</h1>
-            <h3>LA APP DE COMIDA MÁS FAMOSA DE FIME</h3>
+
+    <!-- Contenido del perfil -->
+    <div class="container">
+        <div class="profile-header">
+            <h1><?php echo htmlspecialchars($usuario['nombre']); ?></h1>
+        </div>
+        <div class="profile-info">
+            <h2>Información del Perfil</h2>
+            <p > <i class="fas fa-envelope"></i> Correo electrónico: <?php echo htmlspecialchars($usuario['email']); ?></p>
+            <p> <i class="fas fa-phone"></i> Teléfono: <?php echo htmlspecialchars($usuario['telefono']); ?></p>
+            
         </div>
     </div>
-    <h1>COMIDAS</h1>
-    
-    <div class="fexid-top" id="image">
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-            <div class="imagen1">
-                <img class="img" src="<?php echo $row['foto_pro']; ?>" alt="Producto" height="300px">
-                <div class="texto1">
-                    <div>
-                        <h1><?php echo htmlspecialchars($row['nombre_pro']); ?></h1>
-                        <hr><br>
-                        <h3><?php echo htmlspecialchars($row['descripcion_pro']); ?></h3>
-                        <p>Horario: <?php echo htmlspecialchars($row['horario_pro']); ?></p>
-                        <p>Ubicación: <?php echo htmlspecialchars($row['ubicacion_pro']); ?></p>
-                        <p>Precio: <?php echo htmlspecialchars($row['precio_pro']); ?></p>
-                    </div>
-                </div>
-            </div>
-        <?php endwhile; ?>
-    </div>
-    
-    <!--::::Pie de Pagina::::::-->
+
+    <!-- Pie de página -->
     <footer class="pie-pagina">
         <div class="grupo-1">
             <div class="box">

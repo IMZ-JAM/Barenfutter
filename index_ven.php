@@ -1,3 +1,22 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario_cli'])){
+    echo '
+        <script>
+            alert("Favor de iniciar sesión");
+            window.location = "index.php";
+        </script>
+    ';
+    session_destroy();
+    die();
+}
+
+include('D:\XAMPP\htdocs\Barenfutter\php\conexion_be.php');
+
+$query = "SELECT nombre_pro, descripcion_pro, precio_pro, tipo_pro, ubicacion_pro, horario_pro, foto_pro FROM producto";
+$result = mysqli_query($conexion, $query);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -19,12 +38,12 @@
             <a href="index_ven.php" class="logo"><img src="assets/images/194343.svg" height="50px"><span>BARENFUTTER</span></a>
             <ul class="navbar">
                 <li><a href="index_ven.php" class="active">Inicio</a></li>
-                <li><a href="#" class="">Mis productos</a></li>
+                <li><a href="mi_productos.php" class="">Mis productos</a></li>
                 <li><a href="agre_pro.php" class="">Agregar prod</a></li>
                 <li><a href="php/sesion.php" class="">Cliente</a></li>
             </ul>
             <div class="main">
-                <a href="index_usuario.php" class="user"><i class="ri-user-fill"></i>Mi cuenta</a>
+                <a href="index_usuario_ven.php" class="user"><i class="ri-user-fill"></i>Mi cuenta</a>
                 <a href="php/cerrar_sesion.php">Cerrar sesión</a> 
                 <div class="bx bx-menu" id="menu-icon"></div>
             </div>
@@ -34,6 +53,23 @@
                 <h1>BIENVENIDO!!</h1>
                 <h3>AQUI PODRAS ANUNCIAR TODOS TUS PRODUCTOS</h3>
             </div>
+        </div>
+
+        <div class="fexid-top" id="image">
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                <div class="imagen1">
+                    <img class="img" src="<?php echo $row['foto_pro']; ?>" alt="Producto" height="300px">
+                    <div class="texto1">
+                        <div>
+                            <h1><?php echo htmlspecialchars($row['nombre_pro']); ?></h1>
+                            <hr><br>
+                            <h3><?php echo htmlspecialchars($row['descripcion_pro']); ?></h3>
+                            <p>Horario: <?php echo htmlspecialchars($row['horario_pro']); ?></p>
+                            <p>Teléfono: <?php echo htmlspecialchars($row['ubicacion_pro']); ?></p>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
         </div>
         
         <!--::::Pie de Pagina::::::-->
